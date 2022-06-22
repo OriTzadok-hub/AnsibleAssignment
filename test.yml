@@ -1,0 +1,58 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+  
+  - name: pull nodejs 14.x.x
+    shell: curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    args:
+      warn: no
+
+  - name: install nodejs 14.x.x
+    become: yes
+    apt:
+      update_cache: yes
+      name: nodejs
+      state: present
+
+  - name: Git checkout
+    ansible.builtin.git:
+      repo: 'https://github.com/OriTzadok-hub/bootcamp-app.git'
+      dest: /path/to/repo/locally
+      update: no
+
+  - name: Install dotenv
+    become: yes
+    npm:
+      path: /path/to/repo/locally
+      name: dotenv
+      state: latest
+
+  - name: Create .env
+    copy:
+      dest: "/path/to/repo/locally/.env"
+      content: |
+         PORT=8080
+         HOST=localhost
+         
+         PGHOST=10.0.2.4
+         PGUSERNAME=
+         PGDATABASE=
+         PGPASSWORD=
+         PGPORT=5432
+
+         HOST_URL=http://20.25.113.200:8080
+         COOKIE_ENCRYPT_PWD=superAwesomePasswordStringThatIsAtLeast32CharactersLong!
+         NODE_ENV=development
+
+         OKTA_ORG_URL=https://dev-66078042.okta.com
+         OKTA_CLIENT_ID=
+         OKTA_CLIENT_SECRET=
+
+  - name: Install pm2
+    become: yes
+    npm:
+      name: pm2
+      state: latest
+      global: yes

@@ -29,30 +29,73 @@
       name: dotenv
       state: latest
 
-  - name: Create .env
-    copy:
-      dest: "/path/to/repo/locally/.env"
-      content: |
-         PORT=8080
-         HOST=localhost
-         
-         PGHOST=10.0.2.4
-         PGUSERNAME=
-         PGDATABASE=
-         PGPASSWORD=
-         PGPORT=5432
-
-         HOST_URL=http://20.25.113.200:8080
-         COOKIE_ENCRYPT_PWD=superAwesomePasswordStringThatIsAtLeast32CharactersLong!
-         NODE_ENV=development
-
-         OKTA_ORG_URL=https://dev-66078042.okta.com
-         OKTA_CLIENT_ID=
-         OKTA_CLIENT_SECRET=
-
   - name: Install pm2
     become: yes
     npm:
       name: pm2
       state: latest
-      global: yes
+      path: /path/to/repo/locally
+  
+- hosts: production
+  become: true
+  tasks:
+
+  - name: Create .env
+    copy:
+      dest: "/path/to/repo/locally/.env"
+      content: |
+        PORT=8080
+        HOST=0.0.0.0
+         
+        PGHOST={{ pg_host }}
+        PGUSERNAME={{ pg_user }}
+        PGDATABASE={{ pg_name }}
+        PGPASSWORD={{ pg_password }}
+        PGPORT=5432
+
+        HOST_URL={{ host_url }}
+        COOKIE_ENCRYPT_PWD={{ cookie_pwd }}
+        NODE_ENV=development
+
+        OKTA_ORG_URL={{ okta_url }}
+        OKTA_CLIENT_ID={{ okta_client_id }}
+        OKTA_CLIENT_SECRET={{ okta_client_secret }}
+
+- hosts: test
+  become: true
+  tasks:
+
+  - name: Create .env
+    copy:
+      dest: "/path/to/repo/locally/.env"
+      content: |
+        PORT=8080
+        HOST=localhost
+
+        PGHOST=10.0.2.4
+        PGUSERNAME=
+        PGDATABASE=
+        PGPASSWORD=
+        PGPORT=5432
+
+        HOST_URL=
+        COOKIE_ENCRYPT_PWD=
+        NODE_ENV=development
+
+        OKTA_ORG_URL=
+        OKTA_CLIENT_ID=
+        OKTA_CLIENT_SECRET=
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: startup pm2
+    shell: pm2 startup
+
+  - name: init db
+    shell: chdir=/path/to/repo/locally/ npm run initdb
+    run_once: true
+
+  - name: start with pm2
+    shell: chdir=/path/to/repo/locally/ pm2 start src/index.js

@@ -84,19 +84,17 @@
   become: true
   tasks:
 
-  - name: "Install forever (to run Node.js app)."
-    npm: name=forever global=yes state=present
-
-  - name: "Check list of Node.js apps running."
-    command: forever list
-    register: forever_list
-    changed_when: false
-
   - name: init db
     shell: chdir=/path/to/repo/locally/ npm run initdb
     run_once: true
 
-  - name: "run app"
+  - name: deploy the app after restart
+    cron:
+      name: "launch after reboot"
+      special_time: reboot
+      job: cd /path/to/repo/locally/ && npm run dev
+
+  - name: deploy app
     shell: chdir=/path/to/repo/locally/ npm run dev
     async: 30
     poll: 0

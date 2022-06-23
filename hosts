@@ -1,12 +1,12 @@
 [production]
-First ansible_host=20.85.224.158 ansible_ssh_port=4500
-Second ansible_host=20.85.224.158 ansible_ssh_port=4501
-Third ansible_host=20.85.224.158 ansible_ssh_port=4502
+First ansible_host=20.25.86.147 ansible_ssh_port=4500
+Second ansible_host=20.25.86.147 ansible_ssh_port=4501
+Third ansible_host=20.25.86.147 ansible_ssh_port=4502
 
 [test]
 
 [production:vars]
-host_url=http://20.85.224.158:8080
+host_url=http://20.25.86.147:8080
 cookie_pwd=superAwesomePasswordStringThatIsAtLeast32CharactersLong!
 pg_host=flexpostgresserver.postgres.database.azure.com
 pg_password=Password1234!

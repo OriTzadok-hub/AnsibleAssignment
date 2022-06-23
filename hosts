@@ -1,33 +1,35 @@
 [production]
-First ansible_host=20.25.86.147 ansible_ssh_port=4500
-Second ansible_host=20.25.86.147 ansible_ssh_port=4501
-Third ansible_host=20.25.86.147 ansible_ssh_port=4502
+prodFirst ansible_host= ansible_ssh_port=4500
+prodSecond ansible_host= ansible_ssh_port=4501
+prodThird ansible_host= ansible_ssh_port=4502
 
-[test]
+[staging]
+stagingFirst ansible_host= ansible_ssh_port=
+stagingSecond ansible_host= ansible_ssh_port=
 
 [production:vars]
-host_url=http://20.25.86.147:8080
-cookie_pwd=superAwesomePasswordStringThatIsAtLeast32CharactersLong!
-pg_host=flexpostgresserver.postgres.database.azure.com
-pg_password=Password1234!
-pg_user=adminuser
-pg_name=postgresDB
-okta_url=https://dev-66078042.okta.com
-okta_client_id=0oa5bb6x7jJWuPona5d7
-okta_client_secret=k1fBS5mmexJGnfSqnUw_0eHT803nK-D6cdq5oRPJ
+host_url=
+cookie_pwd=
+pg_host=
+pg_password=
+pg_user=
+pg_name=
+okta_url=
+okta_client_id=
+okta_client_secret=
 
-[test:vars]
-host_url=http://20.85.224.158:8080
-cookie_pwd=superAwesomePasswordStringThatIsAtLeast32CharactersLong!
-pg_host=flexpostgresserver.postgres.database.azure.com
-pg_password=Password1234!
-pg_user=adminuser
-pg_name=postgresDB
-okta_url=https://dev-66078042.okta.com
-okta_client_id=0oa5hc9qotycSKdkp5d7
-okta_client_secret=fpntsmfC4wwYNepDhLVlzZkA3tjLT3fMmYxeAefb
+[staging:vars]
+host_url=
+cookie_pwd=
+pg_host=
+pg_password=
+pg_user=
+pg_name=
+okta_url=
+okta_client_id=
+okta_client_secret=
 
 
 [all:vars]
-ansible_ssh_pass=Password1234!
-ansible_become_pass=Password1234!
+ansible_ssh_pass=
+ansible_become_pass=

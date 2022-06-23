@@ -1,4 +1,24 @@
 ---
+# This playbook includes all the steps to deploy our web app
+# it uses the following modules in this order:
+
+# - pull node-js version 14.x files
+# - update cache and install node js
+# - clone the git repository of the app
+# - install dotenv in the repository directory
+
+# *only for production enviroment*
+# - create .env file with the given variables for production env
+# - initate db via one of the production servers
+
+# *only for staging enviroment*
+# - create .env file with the given variables for staging env
+# - initiate the db via one of the staging servers
+
+# *back to all enviroments*
+# - create a cron job that deployes the app on server restart
+# - deploy the app
+#
 
 - hosts: all
   become: true
@@ -54,8 +74,13 @@
         OKTA_ORG_URL={{ okta_url }}
         OKTA_CLIENT_ID={{ okta_client_id }}
         OKTA_CLIENT_SECRET={{ okta_client_secret }}
+  
+  - name: init db
+    shell: chdir=/path/to/repo/locally/ npm run initdb
+    run_once: true
 
-- hosts: test
+
+- hosts: staging
   become: true
   tasks:
 
@@ -64,29 +89,31 @@
       dest: "/path/to/repo/locally/.env"
       content: |
         PORT=8080
-        HOST=localhost
+        HOST=0.0.0.0
 
-        PGHOST=10.0.2.4
-        PGUSERNAME=
-        PGDATABASE=
-        PGPASSWORD=
+        PGHOST={{ pg_host }}
+        PGUSERNAME={{ pg_user }}
+        PGDATABASE={{ pg_name }}
+        PGPASSWORD={{ pg_password }}
         PGPORT=5432
 
-        HOST_URL=
-        COOKIE_ENCRYPT_PWD=
+        HOST_URL={{ host_url }}
+        COOKIE_ENCRYPT_PWD={{ cookie_pwd }}
         NODE_ENV=development
 
-        OKTA_ORG_URL=
-        OKTA_CLIENT_ID=
-        OKTA_CLIENT_SECRET=
-
-- hosts: all
-  become: true
-  tasks:
+        OKTA_ORG_URL={{ okta_url }}
+        OKTA_CLIENT_ID={{ okta_client_id }}
+        OKTA_CLIENT_SECRET={{ okta_client_secret }}
+  
 
   - name: init db
     shell: chdir=/path/to/repo/locally/ npm run initdb
     run_once: true
+ 
+  
+- hosts: all
+  become: true
+  tasks:
 
   - name: deploy the app after restart
     cron:
@@ -96,5 +123,5 @@
 
   - name: deploy app
     shell: chdir=/path/to/repo/locally/ npm run dev
-    async: 30
+    async: 30000000
     poll: 0

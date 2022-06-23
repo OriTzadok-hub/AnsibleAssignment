@@ -29,12 +29,6 @@
       name: dotenv
       state: latest
 
-  - name: Install pm2
-    become: yes
-    npm:
-      name: pm2
-      state: latest
-      path: /path/to/repo/locally
   
 - hosts: production
   become: true
@@ -90,12 +84,19 @@
   become: true
   tasks:
 
-  - name: startup pm2
-    shell: pm2 startup
+  - name: "Install forever (to run Node.js app)."
+    npm: name=forever global=yes state=present
+
+  - name: "Check list of Node.js apps running."
+    command: forever list
+    register: forever_list
+    changed_when: false
 
   - name: init db
     shell: chdir=/path/to/repo/locally/ npm run initdb
     run_once: true
 
-  - name: start with pm2
-    shell: chdir=/path/to/repo/locally/ pm2 start src/index.js
+  - name: "run app"
+    shell: chdir=/path/to/repo/locally/ npm run dev
+    async: 30
+    poll: 0

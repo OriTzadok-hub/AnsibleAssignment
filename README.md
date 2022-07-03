@@ -1,7 +1,9 @@
 # AnsibleAssignment
 
 ## description
-This repository includes an ansible play-book that deploys the Weight-Tracker  on 2 different enviroments(production,staging)
+This repository includes an ansible play-book that deploys the Weight-Tracker app published artifact on 2 different enviroments(production,staging) - during a release pipeline.
+
+The staging enviroment deployment is automatic (continuous deployment) and the production enviroment deployment needs to be triggered manually (continuous delivery)
 
 ## installation
 On the ansible controller do the following steps:

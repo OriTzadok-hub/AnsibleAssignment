@@ -23,6 +23,19 @@
 - hosts: all
   become: true
   tasks:
+
+
+  - name: install zip
+    apt:
+      update_cache: yes
+      name: zip
+      state: present
+  
+  - name: unzip package
+    ansible.builtin.unarchive:
+      src: /home/adminuser/myagent/_work/r1/a/_OriTzadok-hub.bootcamp-app/weight-artifact/a/webapp.zip
+      dest: /home/adminuser/
+
   
   - name: pull nodejs 14.x.x
     shell: curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
@@ -36,27 +49,16 @@
       name: nodejs
       state: present
 
-  - name: Git checkout
-    ansible.builtin.git:
-      repo: 'https://github.com/OriTzadok-hub/bootcamp-app.git'
-      dest: /path/to/repo/locally
-      update: no
-
   - name: Install dotenv
     become: yes
     npm:
-      path: /path/to/repo/locally
+      path: /home/adminuser/s
       name: dotenv
       state: latest
 
-  
-- hosts: production
-  become: true
-  tasks:
-
   - name: Create .env
     copy:
-      dest: "/path/to/repo/locally/.env"
+      dest: "/home/adminuser/s/.env"
       content: |
         PORT=8080
         HOST=0.0.0.0
@@ -66,62 +68,25 @@
         PGDATABASE={{ pg_name }}
         PGPASSWORD={{ pg_password }}
         PGPORT=5432
-
         HOST_URL={{ host_url }}
         COOKIE_ENCRYPT_PWD={{ cookie_pwd }}
         NODE_ENV=development
-
         OKTA_ORG_URL={{ okta_url }}
         OKTA_CLIENT_ID={{ okta_client_id }}
         OKTA_CLIENT_SECRET={{ okta_client_secret }}
   
   - name: init db
-    shell: chdir=/path/to/repo/locally/ npm run initdb
+    shell: chdir=/home/adminuser/s/ npm run initdb
     run_once: true
-
-
-- hosts: staging
-  become: true
-  tasks:
-
-  - name: Create .env
-    copy:
-      dest: "/path/to/repo/locally/.env"
-      content: |
-        PORT=8080
-        HOST=0.0.0.0
-
-        PGHOST={{ pg_host }}
-        PGUSERNAME={{ pg_user }}
-        PGDATABASE={{ pg_name }}
-        PGPASSWORD={{ pg_password }}
-        PGPORT=5432
-
-        HOST_URL={{ host_url }}
-        COOKIE_ENCRYPT_PWD={{ cookie_pwd }}
-        NODE_ENV=development
-
-        OKTA_ORG_URL={{ okta_url }}
-        OKTA_CLIENT_ID={{ okta_client_id }}
-        OKTA_CLIENT_SECRET={{ okta_client_secret }}
   
-
-  - name: init db
-    shell: chdir=/path/to/repo/locally/ npm run initdb
-    run_once: true
- 
-  
-- hosts: all
-  become: true
-  tasks:
 
   - name: deploy the app after restart
     cron:
       name: "launch after reboot"
       special_time: reboot
-      job: cd /path/to/repo/locally/ && npm run dev
-
+      job: cd /home/adminuser/s/ && npm run dev
+  
   - name: deploy app
-    shell: chdir=/path/to/repo/locally/ npm run dev
+    shell: chdir=/home/adminuser/s/ npm run dev
     async: 30000000
     poll: 0
